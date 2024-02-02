@@ -16,7 +16,7 @@ export default function Protected({ children }) {
       
             !isAuthenticated
             ?
-            <Navigate to={"/"} /> 
+            <Navigate to={"/login"} /> 
             : (
               <>
                 {loading && <Loading />}

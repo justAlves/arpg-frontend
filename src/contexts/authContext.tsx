@@ -16,6 +16,7 @@ interface AuthContextData {
     loading: boolean;
     login: (username: string, password: string) => Promise<boolean>;
     signup: (username: string, password: string, email: string) => Promise<void>;
+    updateDisplayName: (displayName: string) => Promise<void>;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -100,5 +101,24 @@ export function AuthProvider({children}: AuthProviderProps) {
         }
     }
 
-  return <AuthContext.Provider value={{user, isAuthenticated, login, signup, loading }}>{children}</AuthContext.Provider>;
+    const updateDisplayName = async (displayName: string) => {
+        try {
+            setLoading(true);
+            const response = await api.patch(`/user/`, {
+                displayname: displayName
+             });
+            setLoading(false);
+
+            const { id, username, email } = response.data;
+
+            setUser({ id, username, displayName, email });
+
+            toast.success('Nome de exibição atualizado com sucesso', { closeButton: true, duration: 2000 });
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+  return <AuthContext.Provider value={{user, isAuthenticated, login, signup, loading, updateDisplayName }}>{children}</AuthContext.Provider>;
 }
