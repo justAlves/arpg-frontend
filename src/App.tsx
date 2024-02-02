@@ -1,9 +1,7 @@
-import './App.css'
-
 function App() {
   return (
     <>
-      <h1>Awakening Rpg</h1>
+      <h1 className="">Awakening Rpg</h1>
     </>
   )
 }
