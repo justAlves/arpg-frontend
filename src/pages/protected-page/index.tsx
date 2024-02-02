@@ -1,3 +1,4 @@
+import Loading from "@/components/loading";
 import { AuthContext } from "@/contexts/authContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
@@ -7,17 +8,23 @@ import { Navigate } from "react-router-dom";
 
 export default function Protected({ children }) {
   
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, loading } = useContext(AuthContext);
 
     return (
         <>        
-            {
-                !isAuthenticated
-                ?
-                <Navigate to={"/login"} /> 
-                :
-                children
-            }
-        </>
+        {
+      
+            !isAuthenticated
+            ?
+            <Navigate to={"/"} /> 
+            : (
+              <>
+                {loading && <Loading />}
+                {children}
+              </>
+            )
+          
+        }
+    </>
     )
 }

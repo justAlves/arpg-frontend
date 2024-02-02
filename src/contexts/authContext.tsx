@@ -13,7 +13,9 @@ interface User {
 interface AuthContextData {
     user: User;
     isAuthenticated: boolean;
+    loading: boolean;
     login: (username: string, password: string) => Promise<boolean>;
+    signup: (username: string, password: string, email: string) => Promise<void>;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -26,12 +28,11 @@ type AuthProviderProps = {
 export function AuthProvider({children}: AuthProviderProps) {
     const [user, setUser] = useState<User>();
     const isAuthenticated = !!user;
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function getUser(){
             const { '@awakening-rpg:token': token } = parseCookies();
-
-        
 
             if (token) {
                 await api.get('/user/me').then(response => {
@@ -51,8 +52,10 @@ export function AuthProvider({children}: AuthProviderProps) {
         }
 
         try {
+            setLoading(true);
             const response = await api.post('/auth', { username, password });
-            
+            setLoading(false);
+
             const { id, displayName, email, access_token } = response.data;
 
             setCookie(undefined, '@awakening-rpg:token', access_token, {
@@ -71,5 +74,31 @@ export function AuthProvider({children}: AuthProviderProps) {
         }
     };
 
-  return <AuthContext.Provider value={{user, isAuthenticated, login}}>{children}</AuthContext.Provider>;
+    const signup = async (username: string, password: string, email: string) => {
+        if (username.trim() === '' || password.trim() === '' || email.trim() === '') {
+            toast.error('Preencha todos os campos', { closeButton: true, });
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await api.post('/user', { 
+                username, 
+                password, 
+                email
+             });
+            setLoading(false);
+
+            toast.success('Usuário criado com sucesso', { closeButton: true, description: 'Autenticando...', duration: 2000 });
+
+            await login(username, password);
+
+
+             
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+  return <AuthContext.Provider value={{user, isAuthenticated, login, signup, loading }}>{children}</AuthContext.Provider>;
 }

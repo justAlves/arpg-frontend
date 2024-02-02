@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthContext } from "@/contexts/authContext";
+import { toast } from "sonner";
 
 export default function Register() {
+
+    const { signup } = useContext(AuthContext)
 
     const [email, setEmail] = useState('')
     const [userName, setUserName] = useState('')
@@ -12,8 +16,13 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const handleLogin = () => {
-        alert(userName + ' ' + password)
+    const handleRegister = async () => {
+        if (password !== confirmPassword) {
+            toast.error('As senhas não coincidem', { closeButton: true })
+            return
+        }
+
+        await signup(userName, password, email)
     }
 
     const handleShowPassword = () => {
@@ -69,7 +78,7 @@ export default function Register() {
                     <Button
                         size={"lg"}
                         className="bg-blue-400 text-zinc-50 hover:bg-blue-300 mb-4"
-                        onClick={handleLogin}
+                        onClick={handleRegister}
                     >
                         Criar conta
                     </Button>

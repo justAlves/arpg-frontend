@@ -1,18 +1,25 @@
+import Loading from '@/components/loading';
 import { AuthContext } from '@/contexts/authContext';
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { Navigate } from 'react-router-dom';
 
 export default function Public({children}) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useContext(AuthContext);
 
   return (
       <>        
           {
+        
               isAuthenticated
               ?
               <Navigate to={"/"} /> 
-              :
-              children
+              : (
+                <>
+                  {loading && <Loading />}
+                  {children}
+                </>
+              )
+            
           }
       </>
   )
