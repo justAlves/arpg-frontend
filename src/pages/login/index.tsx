@@ -1,17 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthContext } from "@/contexts/authContext";
+import { history } from "@/lib/_helpers";
 
 export default function Login() {
+
+    
+    history.navigate = useNavigate()
+    history.location = useLocation()
 
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const handleLogin = () => {
-        alert(userName + ' ' + password)
+    const { login } = useContext(AuthContext)
+
+    const handleLogin = async () => {
+        const response = await login(userName, password)
+
+        if (response) {
+            history.navigate('/')
+        }
     }
 
     const handleShowPassword = () => {
