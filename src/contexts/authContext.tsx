@@ -36,6 +36,9 @@ export function AuthProvider({children}: AuthProviderProps) {
             const { '@awakening-rpg:token': token } = parseCookies();
 
             if (token) {
+
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
                 await api.get('/user/me').then(response => {
                     const { id, username, displayName, email } = response.data;
                     setUser({ id, username, displayName, email });
@@ -90,11 +93,7 @@ export function AuthProvider({children}: AuthProviderProps) {
              });
             setLoading(false);
 
-            toast.success('Usuário criado com sucesso', { closeButton: true, description: 'Autenticando...', duration: 2000 });
-
             await login(username, password);
-
-
              
         } catch (error) {
             console.log(error)
