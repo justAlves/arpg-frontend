@@ -1,5 +1,4 @@
 import { Heart, Zap } from 'lucide-react'
-import { useEffect } from 'react';
 
 import {
   Card as ShadCdnCard,
@@ -21,11 +20,6 @@ interface CardProps {
 }
 
 export default function Card({data}: CardProps) {
-
-  useEffect(() => {
-    console.log(data)
-  }, []);
-
   return (
     <ShadCdnCard>
       <CardHeader>
